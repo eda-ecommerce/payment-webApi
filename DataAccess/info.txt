@@ -1,0 +1,3 @@
+﻿Auf Terminal-Ebene in den "DataAccess" Ordner switchen:
+dotnet ef migrations add InitDb
+dotnet ef database update InitDb
