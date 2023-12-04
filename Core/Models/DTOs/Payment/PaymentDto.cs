@@ -1,24 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DataAccess.Entities;
+
 
 public class PaymentDto
 {
-    public Guid? UserId { get; set; }
+    public Guid? PaymentId { get; set; }
 
-    /// <summary>
-    /// With [JsonIgnore] the value would not be sent to Kafka
-    /// </summary>
-    //[JsonIgnore]
-    public string Firstname { get; set; }
-
-    /// <summary>
-    /// With [JsonIgnore] the value would not be sent to Kafka
-    /// </summary>
-    //[JsonIgnore]
-    public string Lastname { get; set; }
-
-    /// <summary>
-    /// eg: DieterMücke
-    /// </summary>
-    public string Username { get; set; }
+    public Guid OrderId { get; set; }
+    public DateOnly? PaymentDate { get; set; }
+    public DateOnly CreatedDate { get; set; }
+    public Status Status { get; set; } 
+    public string Type { get; set; }
 }
 

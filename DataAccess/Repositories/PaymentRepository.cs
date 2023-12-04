@@ -17,7 +17,7 @@
     public async Task<Payment> GetPayment(Guid paymentId)
     {
         var payment = await _context.Payments
-            .Where(p => p.UserId == paymentId)
+            .Where(p => p.PaymentId == paymentId)
             .FirstOrDefaultAsync();
         return payment;
     }
@@ -25,7 +25,7 @@
     public async Task UpdatPayment(Payment payment)
     {
         var paymentToUpdate = await _context.Payments
-            .Where(p => p.UserId == payment.UserId)
+            .Where(p => p.PaymentId == payment.PaymentId)
             .FirstOrDefaultAsync();
 
         paymentToUpdate = payment;

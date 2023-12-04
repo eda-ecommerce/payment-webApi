@@ -26,7 +26,7 @@ public class PaymentsController : ControllerBase
     [HttpPut("Update/{id}")]
     public async Task<IActionResult> UpdatePayment(Guid id, [FromBody] PaymentUpdateDto paymentUpdateDto)
     {
-        paymentUpdateDto.UserId = id;
+        paymentUpdateDto.PaymentId = id;
 
         // Find payment
         var payment = await _paymentService.GetPayment(id);

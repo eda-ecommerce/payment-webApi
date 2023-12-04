@@ -54,17 +54,22 @@ public class PaymentService : IPaymentService
         var kafka_broker = _configuration.GetSection("Kafka").GetSection("Broker").Value;
         _logger.LogInformation($" Topic: {kafka_topic}");
 
-        var payment = await _paymentRepository.GetPayment((Guid)paymentUpdateDto.UserId);
+        var payment = await _paymentRepository.GetPayment((Guid)paymentUpdateDto.PaymentId);
         
 
         if (payment == null)
         {
-            throw new Exception($"Payment not found: {paymentUpdateDto.UserId}");
+            throw new Exception($"Payment not found: {paymentUpdateDto.PaymentId}");
         }
 
-        payment.Firstname = paymentUpdateDto.Firstname;
-        payment.Lastname = paymentUpdateDto.Lastname;
-        payment.Username = paymentUpdateDto.Username;
+        payment.PaymentId = paymentUpdateDto.PaymentId;
+        payment.OrderId = paymentUpdateDto.OrderId;
+        payment.PaymentDate = paymentUpdateDto.PaymentDate;
+        payment.CreatedDate = paymentUpdateDto.CreatedDate;
+        payment.Status = paymentUpdateDto.Status;
+        payment.Type = paymentUpdateDto.Type;
+        
+        
 
         await _paymentRepository.UpdatPayment(payment);
 
@@ -75,20 +80,23 @@ public class PaymentService : IPaymentService
             ClientId = Dns.GetHostName()
         };
 
-        var demoPayment = new PaymentDto
+        var demoPayment = new PaymentUpdateDto()
         {
-            Firstname = paymentUpdateDto.Firstname,
-            Lastname = paymentUpdateDto.Lastname,
-            Username = paymentUpdateDto.Username
+            PaymentId = paymentUpdateDto.PaymentId,
+            OrderId = paymentUpdateDto.OrderId,
+            PaymentDate = paymentUpdateDto.PaymentDate,
+            CreatedDate = paymentUpdateDto.CreatedDate,
+            Status = paymentUpdateDto.Status,
+            Type = "Updated"
         };
 
         using var producer = new ProducerBuilder<Null, string>(configProducer).Build();
         
         var result = await producer.ProduceAsync(kafka_topic, new Message<Null, string>
         {
-            Value = JsonSerializer.Serialize<PaymentDto>(demoPayment)
+            Value = JsonSerializer.Serialize<PaymentUpdateDto>(demoPayment)
         });
-        Console.WriteLine(JsonSerializer.Serialize<PaymentDto>(demoPayment));
+        Console.WriteLine(JsonSerializer.Serialize<PaymentUpdateDto>(demoPayment));
 
         
     }
