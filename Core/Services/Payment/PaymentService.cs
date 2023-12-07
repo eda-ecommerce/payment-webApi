@@ -67,7 +67,6 @@ public class PaymentService : IPaymentService
         payment.PaymentDate = paymentUpdateDto.PaymentDate;
         payment.CreatedDate = paymentUpdateDto.CreatedDate;
         payment.Status = paymentUpdateDto.Status;
-        payment.Type = paymentUpdateDto.Type;
         
         
 
@@ -80,23 +79,28 @@ public class PaymentService : IPaymentService
             ClientId = Dns.GetHostName()
         };
 
-        var demoPayment = new PaymentUpdateDto()
+        var kafkaPayment = new PaymentKafkaSchemaDto()
         {
-            PaymentId = paymentUpdateDto.PaymentId,
-            OrderId = paymentUpdateDto.OrderId,
-            PaymentDate = paymentUpdateDto.PaymentDate,
-            CreatedDate = paymentUpdateDto.CreatedDate,
-            Status = paymentUpdateDto.Status,
-            Type = "Updated"
+            Source = "Payment-Service",
+            Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
+            Type = "updated",
+            Payment = new PaymentDto()
+            {
+                PaymentId = paymentUpdateDto.PaymentId,
+                OrderId = paymentUpdateDto.OrderId,
+                PaymentDate = paymentUpdateDto.PaymentDate,
+                CreatedDate = paymentUpdateDto.CreatedDate,
+                Status = paymentUpdateDto.Status,
+            }
         };
 
         using var producer = new ProducerBuilder<Null, string>(configProducer).Build();
         
         var result = await producer.ProduceAsync(kafka_topic, new Message<Null, string>
         {
-            Value = JsonSerializer.Serialize<PaymentUpdateDto>(demoPayment)
+            Value = JsonSerializer.Serialize<PaymentKafkaSchemaDto>(kafkaPayment)
         });
-        Console.WriteLine(JsonSerializer.Serialize<PaymentUpdateDto>(demoPayment));
+        Console.WriteLine(JsonSerializer.Serialize<PaymentKafkaSchemaDto>(kafkaPayment));
 
         
     }
