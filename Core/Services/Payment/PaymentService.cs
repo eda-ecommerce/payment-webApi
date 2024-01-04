@@ -81,9 +81,9 @@ public class PaymentService : IPaymentService
 
         var kafkaPayment = new PaymentKafkaSchemaDto()
         {
-            Source = "Payment-Service",
+            Source = "payment",
             Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
-            Type = "updated",
+            Operation = "updated",
             Payment = new PaymentDto()
             {
                 PaymentId = paymentUpdateDto.PaymentId,
