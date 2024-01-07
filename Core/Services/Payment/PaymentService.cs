@@ -50,8 +50,9 @@ public class PaymentService : IPaymentService
     public async Task UpdatePayment(PaymentUpdateDto paymentUpdateDto)
     {
         // get topic from appsettings.json
-        var kafka_topic = _configuration.GetSection("Kafka").GetSection("Topic1").Value;
-        var kafka_broker = _configuration.GetSection("Kafka").GetSection("Broker").Value;
+        var kafka_topic = !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("KAFKATOPIC")) ? Environment.GetEnvironmentVariable("KAFKATOPIC") : _configuration.GetSection("Kafka").GetSection("Topic1").Value; 
+        // TODO: Add Environment variable Broker
+        var kafka_broker = !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("KAFKABROKER")) ? Environment.GetEnvironmentVariable("KAFKABROKER") : _configuration.GetSection("Kafka").GetSection("Broker").Value;
         _logger.LogInformation($" Topic: {kafka_topic}");
 
         var payment = await _paymentRepository.GetPayment((Guid)paymentUpdateDto.PaymentId);
