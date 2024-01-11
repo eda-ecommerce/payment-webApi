@@ -1,4 +1,6 @@
-﻿public class PaymentRepository : IPaymentRepository
+﻿using DataAccess.Entities;
+
+public class PaymentRepository : IPaymentRepository
 {
     private readonly PaymentDbContext _context;
 
@@ -18,6 +20,7 @@
     {
         var payment = await _context.Payments
             .Where(p => p.PaymentId == paymentId)
+            .Include(p => p.Status)
             .FirstOrDefaultAsync();
         return payment;
     }

@@ -5,6 +5,7 @@
     }
 
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Payment> Status { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
