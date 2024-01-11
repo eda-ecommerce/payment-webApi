@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
@@ -29,7 +31,14 @@ builder.Services.AddSingleton<IMapper>(mapperConfig);
 
 //DbContext
 builder.Services.AddDbContext<PaymentDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+{
+    if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING")))
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+    }
+    options.UseSqlServer(Environment.GetEnvironmentVariable("DBSTRING"));
+});
+    
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
