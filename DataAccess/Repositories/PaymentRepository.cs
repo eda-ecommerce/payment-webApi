@@ -14,13 +14,18 @@ public class PaymentRepository : IPaymentRepository
         var payments = await _context.Payments
             .ToListAsync();
 
+        
+        {
+            
+        }
+
         return payments;
     }
     public async Task<Payment> GetPayment(Guid paymentId)
     {
         var payment = await _context.Payments
             .Where(p => p.PaymentId == paymentId)
-            .Include(p => p.Status)
+            //.Include(p => p.Status)
             .FirstOrDefaultAsync();
         return payment;
     }

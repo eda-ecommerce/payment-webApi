@@ -31,16 +31,17 @@ builder.Services.AddSingleton<IMapper>(mapperConfig);
 
 //DbContext
 builder.Services.AddDbContext<PaymentDbContext>(options =>
-{
-    if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING")))
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
-    }
-    options.UseSqlServer(Environment.GetEnvironmentVariable("DBSTRING"));
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
     
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    // serialize enums as strings in api responses (e.g. Role)
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+
+    // ignore omitted parameters on models to enable optional params (e.g. User update)
+    //x.JsonSerializerOptions.IgnoreNullValues = true;
+});;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,6 +1,6 @@
 ﻿using Core.Models.DTOs.Payment;
 using DataAccess.Entities;
-using Newtonsoft.Json.Linq;
+//using Newtonsoft.Json.Linq;
 
 [Route("api/Payments")]
 [ApiController]
@@ -53,7 +53,7 @@ public class PaymentsController : ControllerBase
     //     return Ok();
     // }
     
-    [HttpPost("payed/{id}")]
+    [HttpPost("paid/{id}")]
     public async Task<IActionResult> PayingAPayment( Guid id, [FromBody] PaymentWebhookDto paymentWebhookDto)
     {
         // Process the incoming event payload
