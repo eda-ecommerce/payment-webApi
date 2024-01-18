@@ -29,8 +29,4 @@
 		<Using Include="Microsoft.Extensions.Configuration" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Models\DTOs\Status\" />
-	</ItemGroup>
-
 </Project>

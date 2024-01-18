@@ -16,8 +16,6 @@ public class PaymentService : IPaymentService
         _configuration = configuration;
     }
 
-
-
     public async Task<List<PaymentDto>?> GetPayments()
     {
         var payments = await _paymentRepository.GetAllPayments();
@@ -79,29 +77,30 @@ public class PaymentService : IPaymentService
             BootstrapServers = kafka_broker,
             ClientId = Dns.GetHostName()
         };
-
-        var kafkaPayment = new PaymentKafkaSchemaDto()
+        
+        // Create Kafka Header
+        var header = new Headers();
+        header.Add("Source", Encoding.UTF8.GetBytes("payment"));
+        header.Add("Timestamp", Encoding.UTF8.GetBytes(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()));
+        header.Add("Operation", Encoding.UTF8.GetBytes("updated"));
+        
+        
+        var paymentDto = new PaymentDto()
         {
-            Source = "payment",
-            Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds(),
-            Operation = "updated",
-            Payment = new PaymentDto()
-            {
-                PaymentId = paymentUpdateDto.PaymentId,
-                OrderId = paymentUpdateDto.OrderId,
-                PaymentDate = paymentUpdateDto.PaymentDate,
-                CreatedDate = paymentUpdateDto.CreatedDate,
-                Status = paymentUpdateDto.Status,
-            }
+            PaymentId = paymentUpdateDto.PaymentId,
+            OrderId = paymentUpdateDto.OrderId,
+            PaymentDate = paymentUpdateDto.PaymentDate,
+            CreatedDate = paymentUpdateDto.CreatedDate,
+            Status = paymentUpdateDto.Status,
         };
-
         using var producer = new ProducerBuilder<Null, string>(configProducer).Build();
         
         var result = await producer.ProduceAsync(kafka_topic, new Message<Null, string>
         {
-            Value = JsonSerializer.Serialize<PaymentKafkaSchemaDto>(kafkaPayment)
+            Value = JsonSerializer.Serialize<PaymentDto>(paymentDto),
+            Headers = header
         });
-        Console.WriteLine(JsonSerializer.Serialize<PaymentKafkaSchemaDto>(kafkaPayment));
+        Console.WriteLine(JsonSerializer.Serialize<PaymentDto>(paymentDto));
 
         
     }
