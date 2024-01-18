@@ -14,7 +14,7 @@ public class PaymentServiceTest
     }
 
     [Fact]
-    public async Task GetPayments_ShouldReturnPayments_WhePaymentsExists()
+    public async Task GetPayments_ShouldReturnPayments_WherePaymentsExists()
     {
         // Arrage
         // payment 1
@@ -90,6 +90,11 @@ public class PaymentServiceTest
         // Assert
         payments.Should().BeNull();
    
+    }
+
+    public async Task UpdatePayment_ShouldUpdatePayment_WhenThePaymentExists()
+    {
+        
     }
 }
 

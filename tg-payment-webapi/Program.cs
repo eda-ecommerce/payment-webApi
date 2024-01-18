@@ -30,10 +30,16 @@ var mapperConfig = new Mapper(typeAdapterConfig);
 builder.Services.AddSingleton<IMapper>(mapperConfig);
 
 //DbContext
+var sqlstring = "";
+if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING"))) {
+    sqlstring = "SqlServer";
+} else {
+    sqlstring = "DBSTRING";
+};
 builder.Services.AddDbContext<PaymentDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
-    
+    options.UseSqlServer(builder.Configuration.GetConnectionString(sqlstring)));
 
+// Add Controllers
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
     // serialize enums as strings in api responses (e.g. Role)
