@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\tg-payment-webapi\Presentation.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -36,6 +37,10 @@
 		<Using Include="System.Threading.Tasks" />
 		<Using Include="Microsoft.Extensions.Logging" />
 		<Using Include="Microsoft.Extensions.Configuration;"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Microsoft.AspNetCore.Mvc.Abstractions" />
 	</ItemGroup>
 
 </Project>

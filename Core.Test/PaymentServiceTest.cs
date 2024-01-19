@@ -1,16 +1,19 @@
-﻿using DataAccess.Entities;
+﻿using Core.Models.DTOs.Payment;
+using DataAccess.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 public class PaymentServiceTest
 {
     private readonly PaymentService _sut; //system unit test
     private readonly Mock<IPaymentRepository> _paymentRepoMock = new Mock<IPaymentRepository>();
-    private readonly ILogger<PaymentService> _logger;
-    private readonly IConfiguration _configuration;
+    private readonly Mock<ILogger<PaymentService>> _logger = new Mock<ILogger<PaymentService>>();
+    private readonly Mock<ILogger<PaymentsController>> _loggerController = new Mock<ILogger<PaymentsController>>();
+    private readonly Mock<IConfiguration> _configuration = new Mock<IConfiguration>();
 
 
     public PaymentServiceTest()
     {
-        _sut = new PaymentService(_logger, _paymentRepoMock.Object, _configuration);
+        _sut = new PaymentService(_logger.Object, _paymentRepoMock.Object, _configuration.Object);
     }
 
     [Fact]
@@ -91,8 +94,54 @@ public class PaymentServiceTest
         payments.Should().BeNull();
    
     }
+    
+    [Fact]
+    public async Task UpdatePayment_ShouldUpdatePayment_WhenPaymentExists()
+    {
+        // Arrage
+        // payment 1
+        var newGuid = Guid.NewGuid();
+        var newGuid1 = Guid.NewGuid();
+        
+        var payment1 = new Payment()
+        {
+            PaymentId = newGuid,
+            OrderId = Guid.NewGuid(),
+            PaymentDate = null,
+            CreatedDate =DateOnly.FromDateTime(DateTime.Now),
+            Status = Status.Unpayed
+        };
+        var payment2 = new Payment()
+        {
+            PaymentId = newGuid1,
+            OrderId = Guid.NewGuid(),
+            PaymentDate = null,
+            CreatedDate =DateOnly.FromDateTime(DateTime.Now),
+            Status = Status.Unpayed
+        };
+        
+       var paymentWebhook = new PaymentWebhookDto()
+        {
+            PaymentDate = DateOnly.FromDateTime(DateTime.Now)
+            
+        };
+       
+       
 
-    public async Task UpdatePayment_ShouldUpdatePayment_WhenThePaymentExists()
+        _paymentRepoMock.Setup(x => x.GetPayment(payment1.PaymentId)).ReturnsAsync(payment1);
+        _paymentRepoMock.Setup(x => x.UpdatPayment(payment1));
+            
+        PaymentsController controller = new PaymentsController(_loggerController.Object, _sut);
+        // Act
+        var result = await controller.PayingAPayment(newGuid, paymentWebhook);
+
+        // Assert
+        var reservation = Assert.IsType<NoContentResult>(result);
+
+    }
+    
+    [Fact]
+    public async Task UpdatePayment_ShouldNotUpdatePayment_WhenThePaymentNotExists()
     {
         
     }

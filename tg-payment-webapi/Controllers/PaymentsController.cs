@@ -90,7 +90,7 @@ public class PaymentsController : ControllerBase
         _logger.LogInformation($"Paying a payment  ${id}"  );
         _logger.LogInformation($"paymentWebhookDto ${paymentWebhookDto.PaymentDate}"  );
 
-        return Ok();
+        return NoContent();
     }
 }
 
