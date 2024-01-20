@@ -126,24 +126,102 @@ public class PaymentServiceTest
             
         };
        
-       
-
         _paymentRepoMock.Setup(x => x.GetPayment(payment1.PaymentId)).ReturnsAsync(payment1);
         _paymentRepoMock.Setup(x => x.UpdatPayment(payment1));
             
         PaymentsController controller = new PaymentsController(_loggerController.Object, _sut);
+        
         // Act
         var result = await controller.PayingAPayment(newGuid, paymentWebhook);
 
         // Assert
-        var reservation = Assert.IsType<NoContentResult>(result);
-
+        Assert.IsType<NoContentResult>(result);
     }
     
     [Fact]
-    public async Task UpdatePayment_ShouldNotUpdatePayment_WhenThePaymentNotExists()
+    public async Task UpdatePayment_ShouldNotUpdatePayment_UpdatedPaymentIsNotFound()
     {
+        // Arrage
+        // payment 1
+        var Guid1 = Guid.NewGuid();
+        var Guid2 = Guid.NewGuid();
         
+        var payment1 = new Payment()
+        {
+            PaymentId = Guid1,
+            OrderId = Guid.NewGuid(),
+            PaymentDate = null,
+            CreatedDate =DateOnly.FromDateTime(DateTime.Now),
+            Status = Status.Unpayed
+        };
+        var payment2 = new Payment()
+        {
+            PaymentId = Guid2,
+            OrderId = Guid.NewGuid(),
+            PaymentDate = null,
+            CreatedDate =DateOnly.FromDateTime(DateTime.Now),
+            Status = Status.Unpayed
+        };
+        
+        var paymentWebhook = new PaymentWebhookDto()
+        {
+            PaymentDate = DateOnly.FromDateTime(DateTime.Now)
+            
+        };
+       
+        _paymentRepoMock.Setup(x => x.GetPayment(payment1.PaymentId)).ReturnsAsync(payment1);
+        _paymentRepoMock.Setup(x => x.UpdatPayment(payment1));
+            
+        PaymentsController controller = new PaymentsController(_loggerController.Object, _sut);
+        
+        // Act
+        var result = await controller.PayingAPayment(Guid2, paymentWebhook);
+
+        // Assert
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
+    
+    [Fact]
+    public async Task UpdatePayment_ShouldNotUpdatePayment_PaymantIdIsWrongFromPayment1()
+    {
+        // Arrage
+        // payment 1
+        var Guid1 = Guid.NewGuid();
+        var Guid2 = Guid.NewGuid();
+        
+        var payment1 = new Payment()
+        {
+            PaymentId = Guid1,
+            OrderId = Guid.NewGuid(),
+            PaymentDate = null,
+            CreatedDate =DateOnly.FromDateTime(DateTime.Now),
+            Status = Status.Unpayed
+        };
+        var payment2 = new Payment()
+        {
+            PaymentId = Guid2,
+            OrderId = Guid.NewGuid(),
+            PaymentDate = null,
+            CreatedDate =DateOnly.FromDateTime(DateTime.Now),
+            Status = Status.Unpayed
+        };
+        
+        var paymentWebhook = new PaymentWebhookDto()
+        {
+            PaymentDate = DateOnly.FromDateTime(DateTime.Now)
+            
+        };
+       
+        _paymentRepoMock.Setup(x => x.GetPayment(payment2.PaymentId)).ReturnsAsync(payment2);
+        _paymentRepoMock.Setup(x => x.UpdatPayment(payment1));
+            
+        PaymentsController controller = new PaymentsController(_loggerController.Object, _sut);
+        
+        // Act
+        var result = await controller.PayingAPayment(Guid1, paymentWebhook);
+
+        // Assert
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 }
 
