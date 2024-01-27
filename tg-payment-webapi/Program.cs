@@ -32,7 +32,7 @@ builder.Services.AddSingleton<IMapper>(mapperConfig);
 //DbContext
 var sqlstring = "";
 if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING"))) {
-    sqlstring = builder.Configuration.GetConnectionString(sqlstring);
+    sqlstring = builder.Configuration.GetConnectionString("SqlServer");
 } else {
     sqlstring = Environment.GetEnvironmentVariable("DBSTRING");
 };
