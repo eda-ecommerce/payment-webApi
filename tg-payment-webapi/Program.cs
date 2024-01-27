@@ -32,13 +32,13 @@ builder.Services.AddSingleton<IMapper>(mapperConfig);
 //DbContext
 var sqlstring = "";
 if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING"))) {
-    sqlstring = "SqlServer";
+    sqlstring = builder.Configuration.GetConnectionString(sqlstring);
 } else {
-    sqlstring = "DBSTRING";
+    sqlstring = Environment.GetEnvironmentVariable("DBSTRING");
 };
 builder.Services.AddDbContext<PaymentDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString(sqlstring)));
-
+    options.UseSqlServer(sqlstring)
+);
 // Add Controllers
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
