@@ -42,60 +42,18 @@ public class PaymentsController : ControllerBase
         return Ok(payments);
     }
 
-    // [HttpPut("Update/{id}")]
-    // public async Task<IActionResult> UpdatePayment(Guid id, [FromBody] PaymentUpdateDto paymentUpdateDto)
-    // {
-    //     paymentUpdateDto.PaymentId = id;
-    //
-    //     // Find payment
-    //     var payment = await _paymentService.GetPayment(id);
-    //
-    //     if (payment == null)
-    //     {
-    //         return NotFound($"Payment not found: {id}");
-    //     }
-    //
-    //
-    //     try
-    //     {
-    //         await _paymentService.UpdatePayment(paymentUpdateDto);
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return NotFound(e.Message);
-    //     }
-    //
-    //     return Ok();
-    // }
-
     [HttpPost("paid/{id}")]
     public async Task<IActionResult> PayingAPayment(Guid id, [FromBody] PaymentWebhookDto paymentWebhookDto)
     {
-        // Process the incoming event payload
-        // Save the event to the database
-        var payment = await _paymentService.GetPayment(id);
-
-        if (payment == null) return NotFound($"Payment not found: {id}");
-
-        var paymentUpdateDto = new PaymentUpdateDto()
-        {
-            PaymentId = id,
-            PaymentDate = paymentWebhookDto.PaymentDate,
-            CreatedDate = payment.CreatedDate,
-            OrderId = payment.OrderId,
-            Status = Status.Payed
-        };
-
         try
         {
-            await _paymentService.UpdatePayment(paymentUpdateDto);
+            var paymentUpdateDto = await _paymentService.UpdatePayment(id, paymentWebhookDto);
+            SendKafkaMessageForUpdatePayment(paymentUpdateDto);
         }
         catch (Exception e)
         {
             return NotFound(e.Message);
         }
-
-        SendKafkaMessageForUpdatePayment(paymentUpdateDto);
 
         return NoContent();
     }
@@ -116,7 +74,6 @@ public class PaymentsController : ControllerBase
         header.Add("Timestamp",
             Encoding.UTF8.GetBytes(new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()));
         header.Add("Operation", Encoding.UTF8.GetBytes("updated"));
-
 
         var paymentDto = new PaymentDto()
         {

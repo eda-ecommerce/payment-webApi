@@ -1,3 +1,4 @@
+using Core.Services.Payment;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,8 +8,9 @@ var PaymentAllowSpecificOrigins = "_paymentAllowSpecificOrigins";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: PaymentAllowSpecificOrigins,
-        builder => {
+    options.AddPolicy(PaymentAllowSpecificOrigins,
+        builder =>
+        {
             builder
                 .AllowAnyHeader()
                 .AllowAnyMethod();
@@ -31,11 +33,11 @@ builder.Services.AddSingleton<IMapper>(mapperConfig);
 
 //DbContext
 var sqlstring = "";
-if (String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING"))) {
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING")))
     sqlstring = builder.Configuration.GetConnectionString("SqlServer");
-} else {
+else
     sqlstring = Environment.GetEnvironmentVariable("DBSTRING");
-};
+;
 builder.Services.AddDbContext<PaymentDbContext>(options =>
     options.UseSqlServer(sqlstring)
 );
@@ -47,7 +49,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
     // ignore omitted parameters on models to enable optional params (e.g. User update)
     //x.JsonSerializerOptions.IgnoreNullValues = true;
-});;
+});
+;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

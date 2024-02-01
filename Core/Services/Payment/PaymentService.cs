@@ -1,4 +1,10 @@
-﻿public class PaymentService : IPaymentService
+﻿using System.Net;
+using Core.Models.DTOs.Payment;
+using DataAccess.Entities;
+
+namespace Core.Services.Payment;
+
+public class PaymentService : IPaymentService
 {
     private readonly ILogger<PaymentService> _logger;
     private readonly IPaymentRepository _paymentRepository;
@@ -35,20 +41,33 @@
         return paymentDto;
     }
 
-    public async Task UpdatePayment(PaymentUpdateDto paymentUpdateDto)
+    public async Task<PaymentUpdateDto> UpdatePayment(Guid paymentId, PaymentWebhookDto paymentWebhookDto)
     {
-        var payment = await _paymentRepository.GetPayment(paymentUpdateDto.PaymentId);
+        // check if payment exists
+        var payment = await _paymentRepository.GetPayment(paymentId);
+        if (payment == null)
+        {
+            _logger.LogInformation($"Payment not found: {paymentId}");
+            return new PaymentUpdateDto();
+        }
 
-        if (payment == null) throw new Exception($"Payment not found: {paymentUpdateDto.PaymentId}");
+        // update payment
+        payment.PaymentDate = paymentWebhookDto.PaymentDate;
+        payment.Status = Status.Payed;
 
-        payment.PaymentId = paymentUpdateDto.PaymentId;
-        payment.OrderId = paymentUpdateDto.OrderId;
-        payment.PaymentDate = paymentUpdateDto.PaymentDate;
-        payment.CreatedDate = paymentUpdateDto.CreatedDate;
-        payment.Status = paymentUpdateDto.Status;
+        // create DTO to return
+        var paymentUpdateDto = new PaymentUpdateDto()
+        {
+            PaymentId = payment.PaymentId,
+            PaymentDate = paymentWebhookDto.PaymentDate,
+            CreatedDate = payment.CreatedDate,
+            OrderId = payment.OrderId,
+            Status = payment.Status
+        };
 
         await _paymentRepository.UpdatPayment(payment);
 
         _logger.LogInformation($"Paying was updated ${payment.PaymentId}");
+        return paymentUpdateDto;
     }
 }
