@@ -1,6 +1,4 @@
-﻿using DataAccess.Entities;
-
-public class PaymentRepository : IPaymentRepository
+﻿public class PaymentRepository : IPaymentRepository
 {
     private readonly PaymentDbContext _context;
 
@@ -16,6 +14,7 @@ public class PaymentRepository : IPaymentRepository
 
         return payments;
     }
+
     public async Task<Payment> GetPayment(Guid paymentId)
     {
         var payment = await _context.Payments
@@ -35,6 +34,4 @@ public class PaymentRepository : IPaymentRepository
         _context.Update(paymentToUpdate);
         _context.SaveChanges();
     }
-
 }
-

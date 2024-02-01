@@ -2,7 +2,6 @@
 using System.Text;
 using Confluent.Kafka;
 using Core.Models.DTOs.Payment;
-using DataAccess.Entities;
 
 namespace Presentation.Controllers;
 
@@ -85,7 +84,7 @@ public class PaymentsController : ControllerBase
         };
         using var producer = new ProducerBuilder<Null, string>(configProducer).Build();
 
-        var result = await producer.ProduceAsync(kafka_topic, new Message<Null, string>
+        await producer.ProduceAsync(kafka_topic, new Message<Null, string>
         {
             Value = JsonSerializer.Serialize<PaymentDto>(paymentDto),
             Headers = header

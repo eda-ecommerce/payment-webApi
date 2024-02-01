@@ -1,5 +1,4 @@
 using Core.Services.Payment;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +15,6 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod();
         });
 });
-
 
 // Services
 builder.Services.AddScoped<IPaymentService, PaymentService>();
@@ -54,7 +52,6 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 var app = builder.Build();
 

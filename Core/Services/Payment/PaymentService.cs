@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Core.Models.DTOs.Payment;
+﻿using Core.Models.DTOs.Payment;
 using DataAccess.Entities;
 
 namespace Core.Services.Payment;
