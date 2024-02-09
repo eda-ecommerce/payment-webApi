@@ -3,10 +3,10 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-ENV DBSTRING "Data Source=192.168.178.130,1433;Initial Catalog=Proverb;Persist Security Info=True;User ID=SA;Password=yourStrong(!)Password;TrustServerCertificate=True"
-ENV KAFKABROKER "localhost:29092"
-ENV KAFKATOPIC "payment"
-ENV WEBAPIPORT 8080
+#ENV DBSTRING "Data Source=192.168.178.130,1433;Initial Catalog=Proverb;Persist Security Info=True;User ID=SA;Password=yourStrong(!)Password;TrustServerCertificate=True"
+#ENV KAFKABROKER "localhost:29092"
+#ENV KAFKATOPIC "payment"
+#ENV WEBAPIPORT 8080
 EXPOSE $WEBAPIPORT
 EXPOSE 8081
 

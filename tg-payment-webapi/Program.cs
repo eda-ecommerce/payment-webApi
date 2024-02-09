@@ -29,16 +29,21 @@ typeAdapterConfig.Scan(Assembly.GetAssembly(typeof(PaymentToPaymentDtoRegister))
 var mapperConfig = new Mapper(typeAdapterConfig);
 builder.Services.AddSingleton<IMapper>(mapperConfig);
 
-//DbContext
-var sqlstring = "";
-if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING")))
-    sqlstring = builder.Configuration.GetConnectionString("SqlServer");
-else
-    sqlstring = Environment.GetEnvironmentVariable("DBSTRING");
-;
+// //DbContext
+// var sqlstring = "";
+// if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DBSTRING")))
+//     sqlstring = builder.Configuration.GetConnectionString("SqlServer");
+// else
+//     sqlstring = Environment.GetEnvironmentVariable("DBSTRING");
+// ;
+// builder.Services.AddDbContext<PaymentDbContext>(options =>
+//     options.UseSqlServer(sqlstring)
+// );
+
+// DbContext
 builder.Services.AddDbContext<PaymentDbContext>(options =>
-    options.UseSqlServer(sqlstring)
-);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
 // Add Controllers
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
