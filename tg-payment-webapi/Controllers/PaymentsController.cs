@@ -46,6 +46,8 @@ public class PaymentsController : ControllerBase
     {
         try
         {
+            var paymentid = await _paymentService.GetPayment(id);
+            if (paymentid == null) return NotFound();
             var paymentUpdateDto = await _paymentService.UpdatePayment(id, paymentWebhookDto);
             SendKafkaMessageForUpdatePayment(paymentUpdateDto);
         }
